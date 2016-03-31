@@ -13,26 +13,26 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    conn = connect()
-    curs = conn.cursor()
+    conn=connect()
+    curs=conn.cursor()
     curs.execute("UPDATE player SET player_matchs = 0, player_wins = 0")
     conn.commit()
     conn.close()
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    conn = connect()
-    curs = conn.cursor()
+    conn=connect()
+    curs=conn.cursor()
     curs.execute("DELETE FROM player")
     conn.commit()
     conn.close()
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    conn = connect()
-    curs = conn.cursor()
+    conn=connect()
+    curs=conn.cursor()
     curs.execute("SELECT count(*) as num from player")
-    num = curs.fetchone()[0]
+    num=curs.fetchone()[0]
     conn.close()
     return num
 
@@ -45,8 +45,8 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """    
-    conn = connect()
-    curs = conn.cursor()
+    conn=connect()
+    curs=conn.cursor()
     curs.execute("INSERT INTO player (player_name) VALUES (%s)",(name,))
     conn.commit()
     conn.close()
@@ -66,11 +66,12 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    conn = connect()
-    curs = conn.cursor()
-    curs.execute("SELECT player_id, player_name, player_wins, player_matchs FROM \
-        player ORDER BY player_wins DESC")
-    table = curs.fetchall()
+    conn=connect()
+    curs=conn.cursor()
+    curs.execute(
+        "SELECT player_id, player_name, player_wins, player_matchs FROM \
+                player ORDER BY player_wins DESC")
+    table=curs.fetchall()
     conn.close()
     return table
 
@@ -81,12 +82,14 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    conn = connect()
-    curs = conn.cursor()
-    curs.execute("UPDATE player SET player_matchs = player_matchs + 1, \
-        player_wins = player_wins + 1 \
+    conn=connect()
+    curs=conn.cursor()
+    curs.execute(
+        "UPDATE player SET player_matchs = player_matchs + 1, \
+                player_wins = player_wins + 1 \
         WHERE player_id = (%s)", (winner,))
-    curs.execute("UPDATE player SET player_matchs = player_matchs + 1 \
+    curs.execute(
+        "UPDATE player SET player_matchs = player_matchs + 1 \
         WHERE player_id = (%s)", (loser,))
     conn.commit()
     conn.close()
@@ -108,23 +111,27 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    conn = connect()
-    curs = conn.cursor()
-    curs.execute("SELECT player_id, player_name FROM \
-        player ORDER BY player_wins DESC")
-    table = curs.fetchall()
+    conn=connect()
+    curs=conn.cursor()
+    curs.execute(
+        "SELECT player_id, player_name FROM \
+                player ORDER BY player_wins DESC")
+    table=curs.fetchall()
     conn.close()
-    result = []
-    pair = []
-    pair_flag = False
+
+    # Store the selected data to the result list in a manner described above
+    result=[]
+    pair=[]
+    pair_flag=False   # The pair_flag decide every two players will be saved in a pair list.
+
     for row in table:
-        for i in range(2):
-            pair.append(row[i])
-    
+        for item in row:
+            pair.append(item)
         if pair_flag:
             result.append(pair)
-            pair = []
-        pair_flag = not pair_flag 
+            pair=[]
+        pair_flag=not pair_flag 
+
     return result
 
 
